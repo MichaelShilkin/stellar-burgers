@@ -35,3 +35,8 @@
   align-items: center;
   margin: 0 auto;
 }
+.menu_part_left > div,
+.logo,
+.link_position_last {
+  cursor: pointer;
+}

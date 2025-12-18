@@ -13,7 +13,9 @@ export const ProfileUI: FC<ProfileUIProps> = ({
   updateUserError,
   handleSubmit,
   handleCancel,
-  handleInputChange
+  handleInputChange,
+  editMode,
+  handleEditClick
 }) => (
   <main className={`${commonStyles.container}`}>
     <div className={`mt-30 mr-15 ${styles.menu}`}>
@@ -35,6 +37,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            disabled={false}
+            onIconClick={() => handleEditClick('name')}
           />
         </div>
         <div className='pb-6'>
@@ -48,6 +52,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            disabled={false}
+            onIconClick={() => handleEditClick('email')}
           />
         </div>
         <div className='pb-6'>
@@ -61,6 +67,8 @@ export const ProfileUI: FC<ProfileUIProps> = ({
             errorText={''}
             size={'default'}
             icon={'EditIcon'}
+            disabled={false}
+            onIconClick={() => handleEditClick('password')}
           />
         </div>
         {isFormChanged && (

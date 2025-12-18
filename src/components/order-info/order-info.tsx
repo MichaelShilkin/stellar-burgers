@@ -1,23 +1,25 @@
 import { FC, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { selectOrderModalData } from '../../services/burgerConstructorSlice'; // Селекторы из существующих слайсов
+import { selectIngredients } from '../../services/ingredientsSlice';
+import { useParams } from 'react-router-dom';
+import { selectFeedOrders } from '../../services/feedSlice';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams<{ number: string }>();
+  const modalOrder = useSelector(selectOrderModalData);
+  const feedOrders = useSelector(selectFeedOrders);
 
-  const ingredients: TIngredient[] = [];
+  const orderData =
+    modalOrder ?? feedOrders.find((order) => String(order.number) === number);
 
-  /* Готовим данные для отображения */
+  console.log('Resolved orderData:', orderData);
+  const ingredients: TIngredient[] = useSelector(selectIngredients) ?? [];
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -26,7 +28,7 @@ export const OrderInfo: FC = () => {
     type TIngredientsWithCount = {
       [key: string]: TIngredient & { count: number };
     };
-
+    // Подсчёт количества каждого ингредиента
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
