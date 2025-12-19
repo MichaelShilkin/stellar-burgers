@@ -18,9 +18,14 @@ export type TBurgerConstructorState = {
   orderModalData: TOrder | null;
   error: string | null;
 };
+
+const savedConstructor = localStorage.getItem('constructorItems');
+
 // Начальное состояние
 const initialState: TBurgerConstructorState = {
-  constructorItems: { bun: null, ingredients: [] },
+  constructorItems: savedConstructor
+    ? JSON.parse(savedConstructor)
+    : { bun: null, ingredients: [] },
   orderRequest: false,
   orderModalData: null,
   error: null
@@ -50,6 +55,11 @@ export const burgerConstructorSlice = createSlice({
       reducer: (state, { payload }: PayloadAction<TConstructorIngredient>) => {
         if (payload.type === 'bun') state.constructorItems.bun = payload;
         else state.constructorItems.ingredients.push(payload);
+
+        localStorage.setItem(
+          'constructorItems',
+          JSON.stringify(state.constructorItems)
+        );
       },
       prepare: (ingredient: TIngredient) => ({
         payload: { ...ingredient, id: nanoid() }
@@ -60,10 +70,15 @@ export const burgerConstructorSlice = createSlice({
         state.constructorItems.ingredients.filter(
           (item) => item.id !== action.payload
         );
+      localStorage.setItem(
+        'constructorItems',
+        JSON.stringify(state.constructorItems)
+      );
     },
     clearConstructor: (state) => {
       state.constructorItems = { bun: null, ingredients: [] };
       state.orderModalData = null;
+      localStorage.removeItem('constructorItems');
     },
     closeOrderModal: (state) => {
       state.orderModalData = null;

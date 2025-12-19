@@ -104,6 +104,14 @@ const AppContent: FC = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <OrderInfo />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path='*' element={<NotFound404 />} />
       </Routes>
@@ -130,10 +138,7 @@ const AppContent: FC = () => {
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <Modal
-                title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
-                onClose={handleCloseModal}
-              >
+              <Modal title='' onClose={handleCloseModal}>
                 <OrderInfo />
               </Modal>
             </ProtectedRoute>

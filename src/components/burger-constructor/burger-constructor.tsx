@@ -9,11 +9,13 @@ import {
   createOrder,
   closeOrderModal
 } from '../../services/burgerConstructorSlice';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Получаем данные из Redux Store
   const constructorItems = useSelector(selectConstructorItems) ?? {
     bun: null,
     ingredients: []
@@ -21,16 +23,22 @@ export const BurgerConstructor: FC = () => {
 
   const orderRequest = useSelector(selectOrderRequest);
   const orderModalData = useSelector(selectOrderModalData);
+  const { user } = useSelector((state) => state.user);
 
   const onOrderClick = useCallback(() => {
     if (!constructorItems.bun || orderRequest) return;
-    // Формируем массив id ингредиентов для запроса на сервер
+    if (!user) {
+      navigate('/login', {
+        state: { from: location }
+      });
+      return;
+    }
     const ingredientIds = [
       constructorItems.bun._id,
       ...constructorItems.ingredients.map((i) => i._id)
     ];
     dispatch(createOrder({ ingredientIds }));
-  }, [constructorItems, orderRequest, dispatch]);
+  }, [constructorItems, orderRequest, dispatch, user, navigate, location]);
 
   const handleCloseModal = useCallback(() => {
     dispatch(closeOrderModal());

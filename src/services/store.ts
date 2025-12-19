@@ -7,10 +7,8 @@ import {
 import { rootReducer } from './rootReducer';
 
 const store = configureStore({
-  reducer: rootReducer,
-  devTools: process.env.NODE_ENV !== 'production'
+  reducer: rootReducer
 });
-console.log('NODE_ENV', process.env.NODE_ENV);
 
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = typeof store.dispatch;
