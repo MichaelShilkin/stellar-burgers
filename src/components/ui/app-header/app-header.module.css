@@ -39,4 +39,5 @@
 .logo,
 .link_position_last {
   cursor: pointer;
+  display: flex;
 }
