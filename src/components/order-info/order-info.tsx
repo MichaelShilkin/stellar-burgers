@@ -1,24 +1,43 @@
-import { FC, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { FC, useMemo, useEffect, useState } from 'react';
+import { useSelector } from '../../services/store';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient } from '@utils-types';
-import { selectOrderModalData } from '../../services/burgerConstructorSlice'; // Селекторы из существующих слайсов
+import { TIngredient, TOrder } from '@utils-types';
+import { selectOrderModalData } from '../../services/burgerConstructorSlice';
 import { selectIngredients } from '../../services/ingredientsSlice';
 import { useParams } from 'react-router-dom';
 import { selectFeedOrders } from '../../services/feedSlice';
+import { getOrderByNumberApi } from '../../utils/burger-api';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
   const { number } = useParams<{ number: string }>();
   const modalOrder = useSelector(selectOrderModalData);
   const feedOrders = useSelector(selectFeedOrders);
+  const ingredients: TIngredient[] = useSelector(selectIngredients) ?? [];
+
+  const [serverOrder, setServerOrder] = useState<TOrder | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const orderData =
-    modalOrder ?? feedOrders.find((order) => String(order.number) === number);
+    modalOrder ??
+    feedOrders.find((order) => String(order.number) === number) ??
+    serverOrder;
 
-  console.log('Resolved orderData:', orderData);
-  const ingredients: TIngredient[] = useSelector(selectIngredients) ?? [];
+  useEffect(() => {
+    if (!orderData && number) {
+      setLoading(true);
+      getOrderByNumberApi(Number(number))
+        .then((res) => {
+          if (res.orders && res.orders.length > 0) {
+            setServerOrder(res.orders[0]);
+          }
+        })
+        .catch((err) => console.error('Ошибка при получении заказа:', err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [number, orderData]);
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
@@ -28,21 +47,17 @@ export const OrderInfo: FC = () => {
     type TIngredientsWithCount = {
       [key: string]: TIngredient & { count: number };
     };
-    // Подсчёт количества каждого ингредиента
+
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
           if (ingredient) {
-            acc[item] = {
-              ...ingredient,
-              count: 1
-            };
+            acc[item] = { ...ingredient, count: 1 };
           }
         } else {
           acc[item].count++;
         }
-
         return acc;
       },
       {}
@@ -53,15 +68,10 @@ export const OrderInfo: FC = () => {
       0
     );
 
-    return {
-      ...orderData,
-      ingredientsInfo,
-      date,
-      total
-    };
+    return { ...orderData, ingredientsInfo, date, total };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (loading || !orderInfo) {
     return <Preloader />;
   }
 
