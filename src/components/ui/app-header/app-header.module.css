@@ -12,12 +12,15 @@
 .menu_part_left {
   display: flex;
   flex-basis: 35%;
+  justify-content: space-evenly;
 }
 
 .link {
   display: flex;
   text-decoration: none;
   color: var(--text-inactive-color);
+  gap: 10px;
+  align-items: center;
 }
 
 .link_active {
@@ -34,4 +37,10 @@
   display: flex;
   align-items: center;
   margin: 0 auto;
+}
+.menu_part_left > div,
+.logo,
+.link_position_last {
+  cursor: pointer;
+  display: flex;
 }
