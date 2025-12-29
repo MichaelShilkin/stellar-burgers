@@ -1,23 +1,44 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useEffect, useState } from 'react';
+import { useSelector } from '../../services/store';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient } from '@utils-types';
+import { TIngredient, TOrder } from '@utils-types';
+import { selectOrderModalData } from '../../services/burgerConstructorSlice';
+import { selectIngredients } from '../../services/ingredientsSlice';
+import { useParams } from 'react-router-dom';
+import { selectFeedOrders } from '../../services/feedSlice';
+import { getOrderByNumberApi } from '../../utils/burger-api';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams<{ number: string }>();
+  const modalOrder = useSelector(selectOrderModalData);
+  const feedOrders = useSelector(selectFeedOrders);
+  const ingredients: TIngredient[] = useSelector(selectIngredients) ?? [];
 
-  const ingredients: TIngredient[] = [];
+  const [serverOrder, setServerOrder] = useState<TOrder | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  /* Готовим данные для отображения */
+  const orderData =
+    modalOrder ??
+    feedOrders.find((order) => String(order.number) === number) ??
+    serverOrder;
+
+  useEffect(() => {
+    if (!orderData && number) {
+      setLoading(true);
+      getOrderByNumberApi(Number(number))
+        .then((res) => {
+          if (res.orders && res.orders.length > 0) {
+            setServerOrder(res.orders[0]);
+          }
+        })
+        .catch((err) => console.error('Ошибка при получении заказа:', err))
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [number, orderData]);
+
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -32,15 +53,11 @@ export const OrderInfo: FC = () => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
           if (ingredient) {
-            acc[item] = {
-              ...ingredient,
-              count: 1
-            };
+            acc[item] = { ...ingredient, count: 1 };
           }
         } else {
           acc[item].count++;
         }
-
         return acc;
       },
       {}
@@ -51,15 +68,10 @@ export const OrderInfo: FC = () => {
       0
     );
 
-    return {
-      ...orderData,
-      ingredientsInfo,
-      date,
-      total
-    };
+    return { ...orderData, ingredientsInfo, date, total };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (loading || !orderInfo) {
     return <Preloader />;
   }
 

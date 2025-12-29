@@ -1,25 +1,37 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
-
+import { useSelector, useDispatch } from '../../services/store';
+import { updateUser } from '../../services/userSlice';
+import { Outlet } from 'react-router-dom';
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
-
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
+  const updateUserError = useSelector((state) => state.user.error);
   const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
+    name: '',
+    email: '',
     password: ''
+  });
+  const [editMode, setEditMode] = useState({
+    name: false,
+    email: false,
+    password: false
   });
 
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
-      name: user?.name || '',
-      email: user?.email || ''
-    }));
+    if (user) {
+      setFormValue({
+        name: user.name,
+        email: user.email,
+        password: ''
+      });
+      setEditMode({
+        name: false,
+        email: false,
+        password: false
+      });
+    }
   }, [user]);
 
   const isFormChanged =
@@ -29,15 +41,27 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    dispatch(updateUser(formValue));
+    setEditMode({
+      name: false,
+      email: false,
+      password: false
+    });
   };
-
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
-    setFormValue({
-      name: user.name,
-      email: user.email,
-      password: ''
-    });
+    if (user) {
+      setFormValue({
+        name: user.name,
+        email: user.email,
+        password: ''
+      });
+      setEditMode({
+        name: false,
+        email: false,
+        password: false
+      });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,15 +71,27 @@ export const Profile: FC = () => {
     }));
   };
 
-  return (
-    <ProfileUI
-      formValue={formValue}
-      isFormChanged={isFormChanged}
-      handleCancel={handleCancel}
-      handleSubmit={handleSubmit}
-      handleInputChange={handleInputChange}
-    />
-  );
+  const handleEditClick = (field: 'name' | 'email' | 'password') => {
+    setEditMode((prevState) => ({
+      ...prevState,
+      [field]: true
+    }));
+  };
+  if (!user) return null;
 
-  return null;
+  return (
+    <>
+      <ProfileUI
+        formValue={formValue}
+        isFormChanged={isFormChanged}
+        handleCancel={handleCancel}
+        handleSubmit={handleSubmit}
+        handleInputChange={handleInputChange}
+        editMode={editMode}
+        handleEditClick={handleEditClick}
+        updateUserError={updateUserError || undefined}
+      />
+      <Outlet />
+    </>
+  );
 };
