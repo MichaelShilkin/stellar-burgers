@@ -8,7 +8,7 @@ import {
   selectOrderModalData,
   createOrder,
   closeOrderModal
-} from '../../services/burgerConstructorSlice';
+} from '../../services/constructor/burgerConstructorSlice';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const BurgerConstructor: FC = () => {

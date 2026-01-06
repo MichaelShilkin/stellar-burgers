@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getFeedsApi } from '../utils/burger-api';
-import { TOrder, TOrdersData } from '../utils/types';
+import { getFeedsApi } from '../../utils/burger-api';
+import { TOrder, TOrdersData } from '../../utils/types';
 
 // Стейт ленты заказов
-interface FeedState extends TOrdersData {
+export interface FeedState extends TOrdersData {
   loading: boolean;
   error: string | null;
 }
@@ -57,7 +57,7 @@ export const feedSlice = createSlice({
   }
 });
 
-import { RootState } from './rootReducer';
+import { RootState } from './../rootReducer';
 
 export const selectFeedOrders = (state: RootState) => state.feed.orders;
 export const selectFeedTotal = (state: RootState) => state.feed.total;

@@ -24,8 +24,8 @@ import {
 } from 'react-router-dom';
 import { useEffect, FC } from 'react';
 import { useDispatch } from '../../services/store';
-import { fetchIngredients } from '../../services/ingredientsSlice';
-import { fetchUser } from '../../services/userSlice';
+import { fetchIngredients } from '../../services/ingredients/ingredientsSlice';
+import { fetchUser } from '../../services/user/userSlice';
 import { ProtectedRoute } from '../routes/ProtectedRoute';
 import { IngredientDetailsUI } from '@ui';
 

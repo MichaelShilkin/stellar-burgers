@@ -5,8 +5,8 @@ import {
   nanoid
 } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
-import { orderBurgerApi } from '../utils/burger-api';
-import { RootState } from './rootReducer';
+import { orderBurgerApi } from '../../utils/burger-api';
+import { RootState } from './../rootReducer';
 
 // Тип состояния среза
 export type TBurgerConstructorState = {
