@@ -2,7 +2,7 @@ describe('Данные для ингредиентов', () => {
   beforeEach(function () {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
     cy.viewport(1300, 800);
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
   });
 
   it('добавляем булку', function () {
