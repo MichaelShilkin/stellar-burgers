@@ -44,3 +44,6 @@
   cursor: pointer;
   display: flex;
 }
+p {
+ font-family: 'Jet Brains Mono'
+}

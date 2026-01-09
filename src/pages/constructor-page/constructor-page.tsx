@@ -8,7 +8,7 @@ import {
   fetchIngredients,
   selectIngredientsLoading,
   selectIngredientsError
-} from '../../services/ingredientsSlice';
+} from '../../services/ingredients/ingredientsSlice';
 
 export const ConstructorPage: FC = () => {
   const dispatch = useDispatch();

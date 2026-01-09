@@ -3,10 +3,10 @@ import { useSelector } from '../../services/store';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient, TOrder } from '@utils-types';
-import { selectOrderModalData } from '../../services/burgerConstructorSlice';
-import { selectIngredients } from '../../services/ingredientsSlice';
+import { selectOrderModalData } from '../../services/constructor/burgerConstructorSlice';
+import { selectIngredients } from '../../services/ingredients/ingredientsSlice';
 import { useParams } from 'react-router-dom';
-import { selectFeedOrders } from '../../services/feedSlice';
+import { selectFeedOrders } from '../../services/feed/feedSlice';
 import { getOrderByNumberApi } from '../../utils/burger-api';
 
 export const OrderInfo: FC = () => {

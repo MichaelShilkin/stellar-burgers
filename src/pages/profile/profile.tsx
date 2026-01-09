@@ -1,7 +1,7 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
-import { updateUser } from '../../services/userSlice';
+import { updateUser } from '../../services/user/userSlice';
 import { Outlet } from 'react-router-dom';
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */

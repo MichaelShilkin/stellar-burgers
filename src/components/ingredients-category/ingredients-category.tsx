@@ -3,12 +3,13 @@ import { useSelector } from '../../services/store';
 import { TIngredientsCategoryProps } from './type';
 import { TIngredient } from '@utils-types';
 import { IngredientsCategoryUI } from '../ui/ingredients-category';
-import { selectConstructorItems } from '../../services/burgerConstructorSlice';
+import { selectConstructorItems } from '../../services/constructor/burgerConstructorSlice';
+import { rest } from 'cypress/types/lodash';
 
 export const IngredientsCategory = forwardRef<
   HTMLUListElement,
   TIngredientsCategoryProps
->(({ title, titleRef, ingredients }, ref) => {
+>(({ title, titleRef, ingredients, ...rest }, ref) => {
   /** TODO: взять переменную из стора */
   const burgerConstructor = useSelector(selectConstructorItems) ?? {
     bun: null,
@@ -33,6 +34,7 @@ export const IngredientsCategory = forwardRef<
       ingredients={ingredients}
       ingredientsCounters={ingredientsCounters}
       ref={ref}
+      {...rest}
     />
   );
 });

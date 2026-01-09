@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
-import { TOrder } from '@utils-types';
+import { TOrder, TOrdersData } from '@utils-types';
 import { FeedInfoUI } from '../ui/feed-info';
 import {
   fetchFeed,
@@ -9,7 +9,7 @@ import {
   selectFeedTotalToday,
   selectFeedLoading,
   selectFeedError
-} from '../../services/feedSlice';
+} from '../../services/feed/feedSlice';
 
 const getOrders = (orders: TOrder[], status: string): number[] =>
   orders
@@ -26,7 +26,12 @@ export const FeedInfo: FC = () => {
   const loading = useSelector(selectFeedLoading);
   const error = useSelector(selectFeedError);
 
-  const feed = { total, totalToday };
+  const feed: TOrdersData = {
+    orders,
+    total,
+    totalToday
+  };
+
   // Загружаем данные при монтировании компонента
   useEffect(() => {
     dispatch(fetchFeed());

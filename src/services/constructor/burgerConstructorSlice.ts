@@ -5,8 +5,8 @@ import {
   nanoid
 } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TIngredient, TOrder } from '@utils-types';
-import { orderBurgerApi } from '../utils/burger-api';
-import { RootState } from './rootReducer';
+import { orderBurgerApi } from '../../utils/burger-api';
+import { RootState } from './../rootReducer';
 
 // Тип состояния среза
 export type TBurgerConstructorState = {
@@ -41,8 +41,11 @@ export const createOrder = createAsyncThunk<
     try {
       const data = await orderBurgerApi(ingredientIds);
       return data.order;
-    } catch (err: any) {
-      return rejectWithValue(err.message || 'Ошибка создания заказа');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+      return rejectWithValue('Ошибка создания заказа');
     }
   }
 );

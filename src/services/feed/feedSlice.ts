@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getFeedsApi } from '../utils/burger-api';
-import { TOrder, TOrdersData } from '../utils/types';
+import { getFeedsApi } from '../../utils/burger-api';
+import { TOrder, TOrdersData } from '../../utils/types';
 
 // Стейт ленты заказов
-interface FeedState extends TOrdersData {
+export interface FeedState extends TOrdersData {
   loading: boolean;
   error: string | null;
 }
@@ -25,8 +25,11 @@ export const fetchFeed = createAsyncThunk<
   try {
     const data = await getFeedsApi();
     return data;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка загрузки заказов');
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return rejectWithValue(err.message);
+    }
+    return rejectWithValue('Ошибка загрузки заказов');
   }
 });
 
@@ -57,7 +60,7 @@ export const feedSlice = createSlice({
   }
 });
 
-import { RootState } from './rootReducer';
+import { RootState } from './../rootReducer';
 
 export const selectFeedOrders = (state: RootState) => state.feed.orders;
 export const selectFeedTotal = (state: RootState) => state.feed.total;

@@ -1,7 +1,7 @@
 import { FC, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from '../../services/store';
-import { selectIngredients } from '../../services/ingredientsSlice';
+import { selectIngredients } from '../../services/ingredients/ingredientsSlice';
 
 import { OrderCardProps } from './type';
 import { TIngredient } from '@utils-types';
