@@ -25,8 +25,11 @@ export const fetchFeed = createAsyncThunk<
   try {
     const data = await getFeedsApi();
     return data;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка загрузки заказов');
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return rejectWithValue(err.message);
+    }
+    return rejectWithValue('Ошибка загрузки заказов');
   }
 });
 

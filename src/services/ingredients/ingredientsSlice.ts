@@ -25,8 +25,11 @@ export const fetchIngredients = createAsyncThunk<
   try {
     const data = await getIngredientsApi();
     return data;
-  } catch (err: any) {
-    return rejectWithValue(err.message || 'Ошибка при получении ингредиентов');
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return rejectWithValue(err.message);
+    }
+    return rejectWithValue('Ошибка при получении ингредиентов');
   }
 });
 

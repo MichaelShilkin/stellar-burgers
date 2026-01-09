@@ -1,8 +1,11 @@
+beforeEach(() => {
+  cy.visit('/');
+});
+
 describe('Данные для ингредиентов', () => {
   beforeEach(function () {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
     cy.viewport(1300, 800);
-    cy.visit('/');
   });
 
   it('добавляем булку', function () {
@@ -31,7 +34,6 @@ describe('открытие модального окна ингредиента'
   this.beforeEach(function () {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
     cy.viewport(1300, 800);
-    cy.visit('http://localhost:4000');
   });
   it('открытие модального окна', function () {
     cy.contains('Детали ингедиента').should('not.exist');
@@ -53,7 +55,7 @@ describe('заказ в модалном окне', function () {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
     cy.intercept('GET', 'api/auth/user', { fixture: 'user.json' });
     cy.intercept('POST', 'api/orders', { fixture: 'post_order.json' }).as(
-      'postOrder)'
+      'postOrder'
     );
 
     window.localStorage.setItem(
@@ -62,7 +64,7 @@ describe('заказ в модалном окне', function () {
     );
     cy.setCookie('accesToken', 'test-accessToken');
     cy.viewport(1300, 800);
-    cy.visit('http://localhost:4000');
+    cy.visit('/');
   });
 
   afterEach(function () {
@@ -75,7 +77,7 @@ describe('заказ в модалном окне', function () {
     cy.get('[data-cy=mains-ingredients]').contains('Добавить').click();
     cy.get('[data-cy=sauces-ingredients]').contains('Добавить').click();
     cy.get('[data-cy=order-summ] button').click();
-
+    cy.wait('@postOrder');
     /*Проверка номера заказа в модальном окне*/
     cy.get('[data-cy=order-number]').contains('123456').should('exist');
 
@@ -83,6 +85,10 @@ describe('заказ в модалном окне', function () {
     cy.get('#modals button[aria-label="Закрыть"]').click();
     cy.get('[data-cy=order-number]').should('not.exist');
     /*Проверяется, что конструктор пуст*/
-    cy.get('[data-cy=constructor]');
+    cy.get('[data-cy=constructor-bun-1]').should('not.exist');
+    cy.get('[data-cy=constructor-bun-2]').should('not.exist');
+    cy.get('[data-cy=constructor-ingredients]').within(() => {
+      cy.get('[data-cy=constructor-ingredient]').should('have.length', 0);
+    });
   });
 });
